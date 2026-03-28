@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luy?n t?p GDKT & Pháp lu?t AI</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; background: #f4f7f9; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; }
+        .setup-section { margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        select, button { padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ddd; }
+        button { background: #3498db; color: white; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #2980b9; }
+        .quiz-card { margin-top: 20px; display: none; }
+        .option { display: block; margin: 10px 0; padding: 10px; border: 1px solid #eee; border-radius: 8px; cursor: pointer; }
+        .option:hover { background: #e8f4fd; }
+        .explanation { display: none; margin-top: 15px; padding: 15px; background: #e7f3fe; border-left: 5px solid #2196F3; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>?? Luy?n t?p GDKT & PL v?i AI</h1>
+    
+    <div class="setup-section">
+        <label>Ch?n ch? d?:</label>
+        <select id="topic">
+            <option value="Cung c?u trong kinh t? th? tru?ng">Cung - C?u trong kinh t?</option>
+            <option value="H? th?ng pháp lu?t Vi?t Nam">H? th?ng Pháp lu?t VN</option>
+            <option value="Quy?n và nghia v? co b?n c?a công dân">Quy?n & Nghia v? công dân</option>
+            <option value="Th? tru?ng lao d?ng và vi?c làm">Th? tru?ng lao d?ng</option>
+        </select>
+        <button onclick="generateQuestion()">T?o câu h?i m?i (AI)</button>
+    </div>
+
+    <div id="quiz-container" class="quiz-card">
+        <h3 id="question-text">Ðang t?i câu h?i...</h3>
+        <div id="options-container"></div>
+        <button id="check-btn" onclick="showExplanation()" style="display:none; margin-top:15px;">Xem dáp án & Gi?i thích</button>
+        <div id="explanation-box" class="explanation"></div>
+    </div>
+</div>
+
+<script>
+    // Gi? l?p d? li?u tr? v? t? AI (Trong th?c t? b?n s? g?i API)
+    async function generateQuestion() {
+        const topic = document.getElementById('topic').value;
+        const container = document.getElementById('quiz-container');
+        const optionsBox = document.getElementById('options-container');
+        const explanationBox = document.getElementById('explanation-box');
+        
+        container.style.display = 'block';
+        explanationBox.style.display = 'none';
+        document.getElementById('check-btn').style.display = 'none';
+        optionsBox.innerHTML = "Ðang k?t n?i v?i trí tu? nhân t?o...";
+
+        // Luu ý: Ðây là d? li?u m?u. B?n c?n k?t n?i v?i backend d? g?i AI th?c t?.
+        setTimeout(() => {
+            const mockAIResponse = {
+                question: `V? m?t kinh t?, khi giá c? hàng hóa tang lên, các doanh nghi?p thu?ng có xu hu?ng gì trong ch? d? "${topic}"?`,
+                options: ["Gi?m s?n xu?t", "M? r?ng s?n xu?t", "Gi? nguyên s?n lu?ng", "Ng?ng kinh doanh"],
+                correct: 1,
+                explanation: "Theo quy lu?t cung: Khi giá c? tang, l?i nhu?n d? ki?n tang, kích thích nhà s?n xu?t m? r?ng quy mô cung ?ng hàng hóa ra th? tru?ng."
+            };
+
+            document.getElementById('question-text').innerText = mockAIResponse.question;
+            optionsBox.innerHTML = "";
+            mockAIResponse.options.forEach((opt, index) => {
+                optionsBox.innerHTML += `<div class="option" onclick="selectOption(${index})">${opt}</div>`;
+            });
+            explanationBox.innerText = mockAIResponse.explanation;
+            window.currentCorrect = mockAIResponse.correct;
+        }, 1000);
+    }
+
+    function selectOption(index) {
+        document.getElementById('check-btn').style.display = 'block';
+        const opts = document.querySelectorAll('.option');
+        opts.forEach(o => o.style.background = 'white');
+        opts[index].style.background = '#d1e7dd';
+    }
+
+    function showExplanation() {
+        document.getElementById('explanation-box').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
