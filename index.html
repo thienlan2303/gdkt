@@ -1,144 +1,213 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luyện tập GDKT & Pháp luật AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>Thí nghiệm Xe Thế năng - THPT Nguyễn Huệ</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
     <style>
-        :root { --primary: #2563eb; --bg: #f8fafc; --text: #1e293b; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
-        .container { max-width: 650px; margin: 30px auto; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        h1 { color: var(--primary); text-align: center; font-size: 22px; }
-        .setup-section { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #e2e8f0; }
-        select, button { padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 16px; outline: none; }
-        button { background: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #1d4ed8; opacity: 0.9; }
-        button:disabled { background: #cbd5e1; cursor: not-allowed; }
-        .quiz-card { display: none; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .question-text { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #0f172a; }
-        .option { display: block; margin: 10px 0; padding: 14px; border: 2px solid #f1f5f9; border-radius: 10px; cursor: pointer; transition: 0.2s; }
-        .option:hover { border-color: #bfdbfe; background: #eff6ff; }
-        .option.selected { border-color: var(--primary); background: #eff6ff; }
-        .explanation { display: none; margin-top: 20px; padding: 15px; background: #f0fdf4; border-radius: 10px; border-left: 4px solid #22c55e; }
-        .error-msg { color: #ef4444; font-size: 14px; margin-top: 10px; display: none; }
+        body { margin: 0; overflow: hidden; background: #f0f2f5; font-family: 'Segoe UI', sans-serif; display: flex; }
+        
+        #sidebar { 
+            width: 320px; 
+            background: #ffffff; 
+            padding: 20px; 
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1); 
+            z-index: 100; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        #header-container { text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 20px; }
+		#school-logo { 
+			width: 80px;           /* Độ rộng của logo */
+			height: 80px;          /* Độ cao của logo */
+			margin: 0 auto 15px;   /* Căn giữa và tạo khoảng cách với chữ phía dưới */
+			background-image: url('https://scontent.fsgn2-4.fna.fbcdn.net/v/t39.30808-6/482027713_1307595940346873_5605849722512172672_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=7b2446&_nc_ohc=J8GXER4CV58Q7kNvwHBWstm&_nc_oc=AdrukbMt3r-SnsTCAcmlfQl1zZ0JOZH910dzOwJTvB3yMa4RzFcjgtiClToS1v5h03vBtBlfqCw0H3N2CA975UYC&_nc_zt=23&_nc_ht=scontent.fsgn2-4.fna&_nc_gid=irtfokitKj3a4GkIlxoO9Q&_nc_ss=7a3a8&oh=00_Af1KLJz1Biv9jOLPN1x1oMiblTT0-kMnPgL5gT2xnvOxtg&oe=69D2C6C8'); /* Dán link ảnh vào đây */
+			background-size: contain;    /* Giúp ảnh không bị mất góc */
+			background-repeat: no-repeat; /* Không lặp lại ảnh */
+			background-position: center;  /* Căn giữa ảnh trong khung */
+		}
+
+        h1 { font-size: 18px; color: #2c3e50; text-transform: uppercase; margin: 0; }
+        
+        .control-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; }
+        input[type=range] { width: 100%; }
+
+        button { 
+            width: 100%; padding: 10px; background: #27ae60; color: white; border: none; 
+            border-radius: 4px; cursor: pointer; font-weight: bold; margin-bottom: 5px;
+        }
+        
+        #log-container { flex-grow: 1; overflow-y: auto; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+        th { background: #f8f9fa; }
+
+        #author-box { 
+    font-size: 12px; 
+    color: #000080; 
+    border-top: 1px solid #eee; 
+    padding-top: 15px; 
+    text-align: center;
+    /* Thêm hoặc sửa dòng này */
+    margin-top: 50px; /* Tăng con số này nếu muốn đẩy xuống, giảm hoặc dùng số âm nếu muốn nâng lên */
+    margin-bottom: 30px; /* Tạo khoảng cách với đáy màn hình */
+}
+        /* Vùng hiển thị mô phỏng */
+        #canvas-container { position: relative; flex-grow: 1; height: 100vh; }
+
+        /* Dấu mốc số [n] */
+        .dot-marker {
+            position: absolute;
+            width: 22px; height: 22px; background: #e74c3c; color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: bold; pointer-events: none;
+            transform: translate(-50%, -100%); border: 2px solid white; z-index: 50;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🎓 Luyện tập GDKT & Pháp luật AI</h1>
-    
-    <div class="setup-section">
-        <label style="font-weight: 600;">Chọn chủ đề bài học:</label>
-        <select id="topic">
-            <option value="Cung cầu trong kinh tế thị trường">Cung - Cầu trong kinh tế</option>
-            <option value="Thị trường lao động và việc làm">Thị trường lao động & việc làm</option>
-            <option value="Hệ thống pháp luật Việt Nam">Hệ thống Pháp luật Việt Nam</option>
-            <option value="Hiến pháp nước CHXHCN Việt Nam">Hiến pháp Việt Nam</option>
-            <option value="Quyền và nghĩa vụ của công dân">Quyền & Nghĩa vụ công dân</option>
-        </select>
-        <button id="gen-btn" onclick="generateQuestion()">Tạo câu hỏi từ AI</button>
-        <div id="error-box" class="error-msg"></div>
+<div id="sidebar">
+    <div id="header-container">
+        <div id="school-logo"></div>
+        <h1>Xe Thế năng</h1>
     </div>
 
-    <div id="quiz-container" class="quiz-card">
-        <div class="question-text" id="question-text"></div>
-        <div id="options-container"></div>
-        
-        <button id="check-btn" onclick="showExplanation()" style="display:none; width: 100%; margin-top:20px; background: #64748b;">
-            Xem Giải thích
-        </button>
-        
-        <div id="explanation-box" class="explanation">
-            <b style="color: #16a34a;">Giải thích:</b> <span id="explanation-text"></span>
-        </div>
+    <div class="control-group">
+        <label>Góc nghiêng: <span id="angT">30</span>°</label>
+        <input type="range" id="angI" min="0" max="90" value="30">
+    </div>
+    <div class="control-group">
+        <label>Ma sát: <span id="fricT">0.05</span></label>
+        <input type="range" id="fricI" min="0" max="0.5" step="0.01" value="0.05">
+    </div>
+
+    <button onclick="startSim()">THẢ XE</button>
+    <button onclick="clearLog()" style="background:#95a5a6">XÓA DỮ LIỆU</button>
+
+    <div id="log-container">
+        <table>
+            <thead><tr><th>Lần</th><th>Góc</th><th>S (px)</th></tr></thead>
+            <tbody id="logBody"></tbody>
+        </table>
+    </div>
+
+    <div id="author-box">
+        <strong>Tác giả: Trần Thiện Lân</strong><br>
+        Trường THPT Nguyễn Huệ
     </div>
 </div>
 
+<div id="canvas-container" id="view"></div>
+
 <script>
-    /** * HƯỚNG DẪN: 
-     * 1. Dán API Key của bạn vào giữa hai dấu ngoặc kép ở dòng dưới.
-     * 2. Lưu file với định dạng UTF-8.
-     */
-    const API_KEY = "AIzaSyD9cNpoJslhCkt1C0Db_ITQbHfZVPaGjok"; 
+    const { Engine, Render, Runner, Bodies, Composite, Events } = Matter;
+    const engine = Engine.create();
+    const world = engine.world;
+    const container = document.getElementById('canvas-container');
 
-    async function generateQuestion() {
-        const topic = document.getElementById('topic').value;
-        const genBtn = document.getElementById('gen-btn');
-        const container = document.getElementById('quiz-container');
-        const optionsBox = document.getElementById('options-container');
-        const errorBox = document.getElementById('error-box');
-        
-        // Trạng thái chờ
-        genBtn.disabled = true;
-        genBtn.innerText = "Đang kết nối AI...";
-        errorBox.style.display = "none";
-        container.style.display = "none";
-        document.getElementById('explanation-box').style.display = "none";
-
-        const prompt = `Bạn là chuyên gia giáo dục môn Kinh tế Pháp luật lớp 10, 11, 12 tại Việt Nam. 
-        Hãy tạo 1 câu hỏi trắc nghiệm về chủ đề: "${topic}". 
-        Trả về DUY NHẤT định dạng JSON thô (không có dấu nháy và chữ json), gồm các trường:
-        question: nội dung câu hỏi,
-        options: mảng 4 đáp án,
-        correct: số từ 0 đến 3 ứng với vị trí đáp án đúng,
-        explanation: giải thích ngắn gọn vì sao đúng.`;
-
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            });
-
-            const data = await response.json();
-            
-            if (data.error) throw new Error(data.error.message);
-
-            let text = data.candidates[0].content.parts[0].text;
-            // Làm sạch chuỗi JSON
-            text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-            const quiz = JSON.parse(text);
-
-            // Hiển thị dữ liệu
-            document.getElementById('question-text').innerText = quiz.question;
-            optionsBox.innerHTML = "";
-            quiz.options.forEach((opt, index) => {
-                const div = document.createElement('div');
-                div.className = 'option';
-                div.innerText = opt;
-                div.onclick = () => selectOption(div, index, quiz.correct);
-                optionsBox.appendChild(div);
-            });
-            document.getElementById('explanation-text').innerText = quiz.explanation;
-            
-            container.style.display = 'block';
-        } catch (err) {
-            errorBox.innerText = "Lỗi: " + err.message + ". Hãy kiểm tra API Key và Internet.";
-            errorBox.style.display = "block";
-            console.error(err);
-        } finally {
-            genBtn.disabled = false;
-            genBtn.innerText = "Tạo câu hỏi từ AI";
+    // Khởi tạo Render với kích thước động
+    const render = Render.create({
+        element: container,
+        engine: engine,
+        options: { 
+            width: container.clientWidth, 
+            height: window.innerHeight, 
+            wireframes: false, 
+            background: '#ffffff' 
         }
+    });
+
+    Render.run(render);
+    Runner.run(Runner.create(), engine);
+
+    let ball, logCount = 0, isMoving = false;
+    
+    // Tọa độ chân dốc (Điểm nối) - Đã căn chỉnh để không bị che
+    const pivotX = 450; 
+    const pivotY = 500; 
+    const rampLen = 450;
+
+    function startSim() {
+        if (ball) Composite.remove(world, ball);
+        const angleDeg = parseFloat(document.getElementById('angI').value);
+        const friction = parseFloat(document.getElementById('fricI').value);
+        const angleRad = angleDeg * Math.PI / 180;
+
+        // 1. MẶT PHẲNG NGANG (Dày và rõ rệt)
+        const ground = Bodies.rectangle(pivotX + 1500, pivotY + 20, 3000, 40, {
+            isStatic: true, friction: friction, render: { fillStyle: '#2c3e50' }
+        });
+
+        // 2. MẶT PHẲNG NGHIÊNG
+        const rampX = pivotX - (rampLen / 2) * Math.cos(angleRad);
+        const rampY = pivotY - (rampLen / 2) * Math.sin(angleRad);
+        const ramp = Bodies.rectangle(rampX, rampY, rampLen, 10, {
+            isStatic: true, angle: angleRad, friction: friction, render: { fillStyle: '#7f8c8d' }
+        });
+
+        // 3. VẬT TRÒN (XE)
+        const ballRadius = 20;
+        const ballX = rampX - (rampLen / 2 - 20) * Math.cos(angleRad);
+        const ballY = rampY - (rampLen / 2 - 20) * Math.sin(angleRad) - ballRadius - 5;
+        ball = Bodies.circle(ballX, ballY, ballRadius, {
+            friction: friction, restitution: 0.01, render: { fillStyle: '#e74c3c' }
+        });
+
+        Composite.clear(world);
+        Composite.add(world, [ground, ramp, ball]);
+        isMoving = true;
     }
 
-    function selectOption(el, idx, correctIdx) {
-        const opts = document.querySelectorAll('.option');
-        opts.forEach(o => { o.style.background = "white"; o.style.borderColor = "#f1f5f9"; });
+    // Vẽ thước đo
+    Events.on(render, 'afterRender', function() {
+        const ctx = render.context;
+        ctx.fillStyle = "#95a5a6";
+        ctx.font = "12px Arial";
+        for (let x = 0; x <= 2000; x += 100) {
+            ctx.fillText(x + "px", pivotX + x - 15, pivotY + 55);
+            ctx.fillRect(pivotX + x, pivotY + 40, 2, 6);
+        }
+    });
+
+    Events.on(engine, 'afterUpdate', function() {
+        if (isMoving && ball && ball.speed < 0.01 && ball.position.x > pivotX + 5) {
+            isMoving = false;
+            recordData(ball.position.x - pivotX);
+        }
+    });
+
+    function recordData(dist) {
+        logCount++;
+        document.getElementById('logBody').innerHTML += `<tr><td>${logCount}</td><td>${document.getElementById('angI').value}°</td><td>${dist.toFixed(1)}</td></tr>`;
         
-        el.style.borderColor = (idx === correctIdx) ? "#22c55e" : "#ef4444";
-        el.style.background = (idx === correctIdx) ? "#dcfce7" : "#fee2e2";
-        
-        document.getElementById('check-btn').style.display = 'block';
+        // Tạo dấu mốc số [n]
+        const dot = document.createElement('div');
+        dot.className = 'dot-marker';
+        dot.style.left = ball.position.x + 'px';
+        dot.style.top = (pivotY) + 'px'; // Đặt ngay trên mặt đường
+        dot.innerText = logCount;
+        container.appendChild(dot);
     }
 
-    function showExplanation() {
-        document.getElementById('explanation-box').style.display = 'block';
+    function clearLog() {
+        document.getElementById('logBody').innerHTML = '';
+        logCount = 0;
+        document.querySelectorAll('.dot-marker').forEach(d => d.remove());
     }
+
+    document.getElementById('angI').oninput = function() { document.getElementById('angT').innerText = this.value; };
+    document.getElementById('fricI').oninput = function() { document.getElementById('fricT').innerText = this.value; };
+
+    // Cập nhật kích thước khi resize cửa sổ
+    window.addEventListener('resize', () => {
+        render.canvas.width = container.clientWidth;
+        render.canvas.height = window.innerHeight;
+    });
+
+    startSim();
 </script>
-
 </body>
 </html>
